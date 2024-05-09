@@ -61,7 +61,7 @@ if not filtered_df.empty:
 else:
     st.markdown("###")
 
-edited_data = st.data_editor(st.session_state["data"], num_rows="dynamic", height=500, use_container_width=True)
+edited_data = st.data_editor(st.session_state["data"], num_rows="dynamic", height=500, use_container_width=True,disabled=("source", "channel","behaviour","event_type","event_subject"))
 
 if st.button("Save Data", key="save-data-tables"):
     with st.spinner('Saving Data...'):
