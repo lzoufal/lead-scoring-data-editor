@@ -33,6 +33,6 @@ if st.button("Add to event scoring table", key="add-to-event-table"):
         #st.text(selected_rows)
         st.session_state["add_to_scoring"] = selected_rows.drop('Select', axis=1)
     st.success('Data Added!', icon = "🎉")
-st.markdown("After clicking the 'Save Data' button, the data will be sent to Keboola Storage using a full load.")
+st.markdown("After clicking the 'Add to event scoring table' button, the data will be available for adding into scoring table on the second sheet-")
 
 display_footer()

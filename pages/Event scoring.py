@@ -16,7 +16,7 @@ st.title("Event scoring")
 
 if "add_to_scoring" in st.session_state:
     if len(st.session_state["add_to_scoring"]) != 0:
-        st.button("Add new events", key="add-new-events")
+        st.button("Add " + str(len(st.session_state["add_to_scoring"])) + " new event(s) " , key="add-new-events")
         with st.spinner('Saving Data...'):
             st.session_state["data"] = pd.concat([st.session_state["data"],st.session_state["add_to_scoring"]],ignore_index=True, sort=False)
 
