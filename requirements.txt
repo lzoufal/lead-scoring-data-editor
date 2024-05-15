@@ -4,3 +4,4 @@ kbcstorage
 streamlit_card
 schedule
 streamlit-on-Hover-tabs
+st_pages

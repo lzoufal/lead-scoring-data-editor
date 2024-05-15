@@ -6,7 +6,7 @@ import pandas as pd
 
 from Tables import cast_bool_columns, get_dataframe, write_to_keboola, write_to_log, fetch_all_ids, display_footer, display_logo, init
 # Set Streamlit page config and custom CSS
-st.set_page_config(layout="wide")
+
 init()
 display_logo()
 st.session_state['selected-table'] = "in.c-lead-scoring-data-app.lead-scoring"

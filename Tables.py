@@ -9,13 +9,31 @@ from streamlit_card import card
 import time
 import schedule
 import datetime
+from st_pages import Page, Section, add_page_title, show_pages
 
 
 # Constants
 token = st.secrets["kbc_storage_token"]
 url = st.secrets["kbc_url"]
-LOGO_IMAGE_PATH = os.path.abspath("./app/static/keboola.png")
 
+path = os.path.dirname(os.path.abspath(__file__))
+
+LOGO_IMAGE_PATH = path+'/static/keboola.png'
+
+# Set Streamlit page config and custom CSS
+st.set_page_config(layout="wide")
+
+
+show_pages(
+    [
+        Page("Tables.py", "Tables pages"),
+        Section(name="Events", icon=""),
+        Page("pages/Add event.py", "Add events", "📖"),
+        Page("pages/Event scoring.py", "Event scoring", "✏️"),
+        Section(name="Contacts"),
+        Section(name="Promt playground")
+    ]
+)
 # Initialize Client
 client = Client(url, token)
 
@@ -35,10 +53,6 @@ def get_dataframe(table_name):
     os.rename(table_detail['name'], 'data.csv')
     df = pd.read_csv('data.csv')
     return df
-
-
-# Set Streamlit page config and custom CSS
-st.set_page_config(layout="wide")
 
 # Load and encode image for HTML
 def get_base64_encoded_image(image_path):
