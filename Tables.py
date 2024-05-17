@@ -24,17 +24,7 @@ LOGO_IMAGE_PATH = path+'/static/keboola.png'
 st.set_page_config(layout="wide")
 
 
-show_pages(
-    [
-        Page("Tables.py", "Tables pages"),
-        #Section(name="Events section", icon=""),
-        Page("pages/Events.py", "Events"),
-        #Page("pages/Event scoring.py", "Event scoring", "✏️"),
-        #Page("pages/Add event.py", "Add events", "📖"),
-        Section(name="Contacts"),
-        Section(name="Promt playground")
-    ]
-)
+
 # Initialize Client
 client = Client(url, token)
 
