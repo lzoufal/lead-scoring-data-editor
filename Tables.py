@@ -27,9 +27,10 @@ st.set_page_config(layout="wide")
 show_pages(
     [
         Page("Tables.py", "Tables pages"),
-        Section(name="Events", icon=""),
-        Page("pages/Add event.py", "Add events", "📖"),
-        Page("pages/Event scoring.py", "Event scoring", "✏️"),
+        #Section(name="Events section", icon=""),
+        Page("pages/Events.py", "Events"),
+        #Page("pages/Event scoring.py", "Event scoring", "✏️"),
+        #Page("pages/Add event.py", "Add events", "📖"),
         Section(name="Contacts"),
         Section(name="Promt playground")
     ]
@@ -85,13 +86,6 @@ def init():
     if 'tables_id' not in st.session_state:
         st.session_state['tables_id'] = pd.DataFrame(columns=['table_id'])
 
-def cast_bool_columns(df):
-    """Ensure that columns that should be boolean are explicitly cast to boolean."""
-    for col in df.columns:
-        # If a column in the DataFrame has only True/False or NaN values, cast it to bool
-        if df[col].dropna().isin([True, False]).all():
-            df[col] = df[col].astype(bool)
-    return df
 
 def write_to_keboola(data, table_name, table_path, incremental):
     """
@@ -148,15 +142,6 @@ def get_dataframe(table_name):
     df = pd.read_csv('data.csv')
     return df
 
-def write_to_log(data, table, incremental):
-    now = datetime.datetime.now()
-    log_df = pd.DataFrame({
-            'table_id': table,
-            'new': [data],
-            'log_time': now,
-            'user': "PlaceHolderUserID"
-        })
-    write_to_keboola(log_df, f'in.c-keboolasheets.log',f'updated_data_log.csv.gz', incremental)
 
 # Fetch and prepare table IDs and short description
 @st.cache_data(ttl=7200)
@@ -177,27 +162,27 @@ def create_cards_in_rows(tables_df):
 # Display a single table card
 def display_table_card(row):
     card(
-        title=row["displayName"].upper(),
-        text=[f"Primary key: {row['primaryKey']}", f"Table ID: {row['table_id']}", f"Updated at: {row['lastImportDate']}", f"Created at: {row['created']}", f"Rows count: {str(row['rowsCount'])}"],
+        title=row["cards"].upper(),
+        text=[""],
         styles={
             "card": {
                 "width": "100%",
                 "height": "100%",
-                "borderRadius": "5px",
+                "borderRadius": "10px",
                 "boxShadow": "none",
                 "padding": "20px",
                 "display": "flex",
                 "paddingBottom": "30px",
-                "justifyContent": "start",
+                "justifyContent": "flex",
     
             },
             "filter": {
-                "background-color": "#b6dafa"
+                "background-color": "#E2E2E2"
             },
             "title": {
                 "color": "black",
                 "font-size": "24px",
-                "text-align":"left",
+                "text-align":"center",
                 "marginTop": "20px",  # Added space on top
                 "marginLeft": "0",  # To keep the left margin neutral
                 "marginRight": "0", 
@@ -219,29 +204,29 @@ def display_table_card(row):
             
         },
         image="https://upload.wikimedia.org/wikipedia/en/4/48/Blank.JPG" ,
-        key=row['table_id'],
-        on_click=lambda table_id=row['table_id']: st.session_state.update({"selected-table": table_id, "go-to-data": True})
+        #key=row['table_id'],
+        on_click=lambda path=row['paths']: st.session_state.update({"selected-table": path, "go-to-data": True})
     )
     
 def main():
     init()
     display_logo()
-    #st.title("data")
     st.session_state["tables_id"] = tables_df = fetch_all_ids()
-    st.session_state["selected-table"] = tables_df.loc[0, 'table_id']
-    st.session_state["data"] = get_dataframe(st.session_state["selected-table"])
+    
+    st.session_state["df_event_scoring"] = get_dataframe("in.c-lead-scoring-data-app.lead-scoring")
+    st.session_state["df_event_add"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
 
     if len(tables_df) != 0:
-        st.title("Tables from Keboola")
+        st.title("Lead score management")
         st.write('Select and click on a specific table you want to edit.')
         w7, w8, w9 = st.columns([8, 2, 2])
         if w9.button("Reload Tables List", key="reload-tables"):
             st.session_state["tables_id"] = tables_df = fetch_all_ids()
             st.toast('Tables List Reloaded!', icon = "✅")
         w1 = st.columns([1])            
-        create_cards_in_rows(st.session_state["tables_id"])
+        create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],"paths" :  ["pages/Events.py","Contact scoring","Prompt playground"]}))
         if st.session_state["go-to-data"] == True:
-            st.switch_page("pages/Data_Editor.py")
+            st.switch_page(st.session_state["selected-table"])
     else:
         st.error('Data is not loaded yet.')
         

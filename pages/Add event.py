@@ -4,19 +4,25 @@ import schedule
 import time
 import pandas as pd
 
-from Tables import cast_bool_columns, get_dataframe, write_to_keboola, write_to_log, fetch_all_ids, display_footer, display_logo, init
+from Tables import  get_dataframe, write_to_keboola, fetch_all_ids, display_footer, display_logo, init
 # Set Streamlit page config and custom CSS
-st.set_page_config(layout="wide")
+
 init()
 display_logo()
-st.session_state['selected-table'] = "in.c-lead-scoring-data-app.events_add"
-st.session_state["data"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
+#st.session_state['selected-table'] = "in.c-lead-scoring-data-app.events_add"
+#st.session_state["data"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
 
 st.title("Add event")
 st.subheader("Pick event types, which you wish to add into Event scoring table")  
 
-df = st.session_state["data"]
-df.insert(0, "Select", False)
+if 'df_event_add' not in st.session_state:
+    st.session_state['df_event_add'] = get_dataframe("in.c-lead-scoring-data-app.events_add")
+
+df = st.session_state["df_event_add"]
+
+if "Select" not in df.columns:
+    df.insert(0, "Select", False)
+    
 edited_data = st.data_editor(df, num_rows="dynamic", height=500, use_container_width=True,disabled=("source", "channel","behaviour","event_type","event_subject"), column_config={"Select": st.column_config.CheckboxColumn(required=True)})
 
 if st.button("Add to event scoring table", key="add-to-event-table"):
