@@ -21,7 +21,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 LOGO_IMAGE_PATH = path+'/static/keboola.png'
 
 # Set Streamlit page config and custom CSS
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",page_title="Homepage")
 
 
 
@@ -101,37 +101,6 @@ def write_to_keboola(data, table_name, table_path, incremental):
         is_incremental=incremental
     )
 
-def get_dataframe(table_name):
-    """
-    Retrieves a dataframe from a specified table.
-
-    Args:
-        table_name (str): The name of the table.
-
-    Returns:
-        pandas.DataFrame: The dataframe containing the table data.
-    """
-    table_detail = client.tables.detail(table_name)
-    file_path = './' + table_detail['name']
-
-    client.tables.export_to_file(table_id=table_name, path_name='')
-
-    if os.path.exists(file_path):
-        with open(file_path, mode='rt', encoding='utf-8') as in_file:
-            lazy_lines = (line.replace('\0', '') for line in in_file)
-            reader = csv.reader(lazy_lines, lineterminator='\n')
-            if os.path.exists('data.csv'):
-                os.remove('data.csv')
-            else:
-                print("The file does not exist")
-    else:
-        print(f"The file {file_path} does not exist")
-        return pd.DataFrame()
-
-    os.rename(table_detail['name'], 'data.csv')
-    df = pd.read_csv('data.csv')
-    return df
-
 
 # Fetch and prepare table IDs and short description
 @st.cache_data(ttl=7200)
@@ -201,24 +170,20 @@ def display_table_card(row):
 def main():
     init()
     display_logo()
-    st.session_state["tables_id"] = tables_df = fetch_all_ids()
+    #st.session_state["tables_id"] = tables_df = fetch_all_ids()
     
     st.session_state["df_event_scoring"] = get_dataframe("in.c-lead-scoring-data-app.lead-scoring")
     st.session_state["df_event_add"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
 
-    if len(tables_df) != 0:
-        st.title("Lead score management")
-        st.write('Select and click on a specific table you want to edit.')
-        w7, w8, w9 = st.columns([8, 2, 2])
-        if w9.button("Reload Tables List", key="reload-tables"):
-            st.session_state["tables_id"] = tables_df = fetch_all_ids()
-            st.toast('Tables List Reloaded!', icon = "✅")
-        w1 = st.columns([1])            
-        create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],"paths" :  ["pages/Events.py","Contact scoring","Prompt playground"]}))
-        if st.session_state["go-to-data"] == True:
-            st.switch_page(st.session_state["selected-table"])
-    else:
-        st.error('Data is not loaded yet.')
+    st.title("Lead score management")
+    st.write('Select and click on a specific table you want to edit.')
+              
+    create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],
+                                       "paths" :  ["pages/Events.py","Contact scoring","Prompt playground"]
+                                       }))
+    if st.session_state["go-to-data"] == True:
+        st.session_state["go-to-data"] = False
+        st.switch_page(st.session_state["selected-table"])
         
     display_footer()
       
