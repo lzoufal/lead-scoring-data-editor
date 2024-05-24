@@ -183,7 +183,7 @@ def main():
     st.write('Select and click on a specific table you want to edit.')
               
     create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],
-                                       "paths" :  ["pages/Events.py","pages/Contacts.py","Prompt playground"]
+                                       "paths" :  ["pages/Events.py","pages/Contacts.py","pages/PromptLab.py"]
                                        }))
     if st.session_state["go-to-data"] == True:
         st.session_state["go-to-data"] = False

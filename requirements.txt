@@ -6,3 +6,6 @@ schedule
 streamlit-on-Hover-tabs
 st_pages
 openai
+langchain
+langchain_community
+sentence_transformers
