@@ -10,11 +10,14 @@ import time
 import schedule
 import datetime
 from st_pages import Page, Section, add_page_title, show_pages
-
+import openai
 
 # Constants
 token = st.secrets["kbc_storage_token"]
 url = st.secrets["kbc_url"]
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+
+openai.api_key = OPENAI_API_KEY
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -174,12 +177,13 @@ def main():
     
     st.session_state["df_event_scoring"] = get_dataframe("in.c-lead-scoring-data-app.lead-scoring")
     st.session_state["df_event_add"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
-
+    st.session_state["df_contact_scoring"] = get_dataframe("in.c-lead-scoring-data-app.contact-scoring")
+    
     st.title("Lead score management")
     st.write('Select and click on a specific table you want to edit.')
               
     create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],
-                                       "paths" :  ["pages/Events.py","Contact scoring","Prompt playground"]
+                                       "paths" :  ["pages/Events.py","pages/Contacts.py","Prompt playground"]
                                        }))
     if st.session_state["go-to-data"] == True:
         st.session_state["go-to-data"] = False
