@@ -79,6 +79,15 @@ def init():
     if 'tables_id' not in st.session_state:
         st.session_state['tables_id'] = pd.DataFrame(columns=['table_id'])
 
+    if 'industry' not in st.session_state:
+        st.session_state.industry = "None"
+
+    if 'keywords' not in st.session_state:
+        st.session_state.keywords = "None"
+
+    if 'target' not in st.session_state:
+        st.session_state.target = "None"
+
 
 def write_to_keboola(data, table_name, table_path, incremental):
     """
@@ -178,7 +187,8 @@ def main():
     st.session_state["df_event_scoring"] = get_dataframe("in.c-lead-scoring-data-app.lead-scoring")
     st.session_state["df_event_add"] = get_dataframe("in.c-lead-scoring-data-app.events_add")
     st.session_state["df_contact_scoring"] = get_dataframe("in.c-lead-scoring-data-app.contact-scoring")
-    
+    st.session_state["df_user_stories"] = get_dataframe("out.c-user_strories_pairing.USER_STORIES")
+
     st.title("Lead score management")
     st.write('Select and click on a specific table you want to edit.')
               

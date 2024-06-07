@@ -7,6 +7,8 @@ import json
 
 from sentence_transformers import SentenceTransformer, util
 from functions.prompt_output import get_prompts, get_response
+from functions.context_selector import set_template
+from functions.prompt_templates import templates
 
 def init_session_states():
         default_params = {
@@ -61,11 +63,9 @@ def run_prompts_app(df):
     test_info = """
     🤹 This is your playground. Try up to 3 different prompts, or the same prompt with different settings, it\'s up to you! However, there are some important things to keep in mind:
     
-    - Prompts run horizontally, you get a response(s) for each row of your table.
     
     - Make sure the prompts contain relevant column names in double square brackets.
 
-    - Don\'t forget to select how many rows of your table you want to use.
     """
     
     html_code = f"""
@@ -75,6 +75,17 @@ def run_prompts_app(df):
     """
     st.markdown(html_code, unsafe_allow_html=True)
     st.text(" ")
+
+    st.selectbox(
+            "Select prompt template:",
+            templates["type"].unique(),
+            index = None,
+            key="_template",
+            on_change=set_template
+        )
+
+
+
 
     col1, _, _ =st.columns(3)
     num_prompts = col1.number_input("Select number of prompts:", min_value=1, value=1, max_value=3, )

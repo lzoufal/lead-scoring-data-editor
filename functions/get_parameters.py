@@ -11,7 +11,7 @@ def get_parameters(prefix=""):
     model = col1.selectbox("Model", models, key=f"{prefix}set_model")
 
     max_tokens = int(col2.number_input(
-        "Max tokens", min_value=0, value=150,
+        "Max tokens", min_value=0, value=500,
         help="The maximum number of [tokens](https://platform.openai.com/tokenizer) to generate in the chat completion.", 
         key=f"{prefix}set_tokens"
     ))

@@ -19,7 +19,8 @@ def get_prompts(num_prompts):
                 f'Prompt {i + 1}:', 
                 placeholder=f'Prompt {i + 1}:', 
                 label_visibility="collapsed", height=300,
-                key=f"prompt_{i + 1}"
+                key=f"prompt_{i + 1}",
+                value= st.session_state.get("template_text",'')
             )
             prompts_dict[f"prompt_{i + 1}"] = prompt_input
 
@@ -28,7 +29,7 @@ def get_prompts(num_prompts):
                 st.session_state[f"response_params_{i + 1}"] = response_params
     return prompts_dict
 
-# Create placeholder list
+# Create placeholder listi
 def find_placeholders(prompts):
     placeholder_set = set()
     for prompt_key in prompts.keys():

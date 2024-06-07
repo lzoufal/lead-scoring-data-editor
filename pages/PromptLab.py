@@ -8,10 +8,12 @@ import os
 from functions.show_data_info import show_data_info
 from functions.improve_prompt import improve_prompt
 from functions.run_prompts_app import run_prompts_app
+from functions.context_selector import show_context
+from functions.context_selector import filter_stories
 
 from src.st_aggrid.st_aggrid import interactive_table
 
-from Tables import display_logo
+from Tables import display_logo,get_dataframe
 
 image_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,71 +31,40 @@ OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 openai.api_key = OPENAI_API_KEY
 
-def get_uploaded_file(upload_option):
+def get_uploaded_file():
+    if 'df_user_stories' not in st.session_state:
+        st.session_state['df_user_stories'] = get_dataframe("out.c-user_strories_pairing.USER_STORIES")
+    return st.session_state['df_user_stories']
+
+def display_main_content(openai_api_key):
+    #if uploaded_file:
+    df = get_uploaded_file()
+    #show_data_info(df)
+    show_context(df)
+
+    if st.session_state['df_user_stories'] is not None:
+        interactive_table()
     
+    if len(openai_api_key) < 14:
+        st.warning("To continue, please enter your OpenAI API Key.")
     
-    file = image_path + "/sample_data.csv"
-    st.session_state['uploaded_file'] = file
-    return st.session_state['uploaded_file']
+    #improve_prompt()
+    if st.session_state.industry and st.session_state.keywords:
+        selected_df = pd.DataFrame({
+            "industry": [st.session_state.industry],
+            #"keywords": [','.join(st.session_state.keywords) if isinstance(st.session_state.keywords, list) else st.session_state.keywords],
+            "job_role": [st.session_state.target],
+            "user_story":[filter_stories(df,st.session_state.industry,st.session_state.keywords)]
+        })
+    run_prompts_app(selected_df)
 
-def display_main_content(uploaded_file, openai_api_key):
-    if uploaded_file:
-        df = pd.read_csv(uploaded_file)
-        show_data_info(df)
-        
-        if st.session_state['uploaded_file'] is not None:
-            interactive_table()
-        
-        if len(openai_api_key) < 14:
-            st.warning("To continue, please enter your OpenAI API Key.")
-        
-        improve_prompt()
-        run_prompts_app(df)
-
-        st.text(" ")
-        #st.markdown(f"{logo_html}", unsafe_allow_html=True)
-    else:
-        st.markdown("""
-        __Welcome to the PromptLab!__ 
-        
-        🔄 __Connect__
-                    
-        - Start by connecting to the Keboola storage, you'll need your API token to do this. To get it, go to _Settings_ in your Keboola account and find the _API Tokens_ tab (see the [documentation](https://help.keboola.com/management/project/tokens/) for more information).
-        You will then be able to select the bucket and table you want to work with. 
-                    
-        - You'll also need an OpenAI API key; if you don't have one, you can get it [here](https://platform.openai.com/account/api-keys).
-
-        __Once connected, you can use the app in the following steps:__
-                    
-        📊 __1. Explore__ – In this section, you'll see the uploaded table to make sure you are working with the correct data.
-                    
-        🛠️ __2. Improve__ – If you have ideas but are unsure about the wording of your prompts, have them improved here. Simply enter your idea and hit the _Improve_ button. The app will return an improved version that follows prompt engineering best practices.
-                   
-        🤹‍♂️ __3. Test__ – This is where you can experiment and fine-tune your prompts. You can input 1-3 prompts to run with your data. Each prompt comes with its own settings, allowing you to tweak parameters or compare results across different models.
-         
-        If you ever feel lost, you can always find this information in the _Guide_ tab.
-                    """)
-
+    st.text(" ")
+    #st.markdown(f"{logo_html}", unsafe_allow_html=True)
+    
 def main():
-    if 'uploaded_file' not in st.session_state:
-        st.session_state['uploaded_file'] = None
-
-    upload_option = st.sidebar.selectbox('Select an upload option:', 
-                                    ['Connect to Keboola Storage',
-                                    #'Upload a CSV file',
-                                    'Use Demo Dataset'
-                                     ], help="""
-    You can get your own API token by following these instructions:
-    1. Go to Settings in your Keboola account.
-    2. Go to the __API Tokens__ tab.
-    3. Click on __+ NEW TOKEN__ button, set it and __CREATE__.
-    """)
-
-    uploaded_file = get_uploaded_file(upload_option)
-
     tab1, tab2 = st.tabs(["App", "Guide"])
     with tab1:
-        display_main_content(uploaded_file, OPENAI_API_KEY)
+        display_main_content(OPENAI_API_KEY)
     
     with tab2:
         st.markdown("""
