@@ -5,7 +5,7 @@ from st_aggrid.shared import GridUpdateMode
 ########################################################################################################################
 ######################################### INTERACTIVE TABLE ############################################################
 def interactive_table():
-    query_df = pd.read_csv(st.session_state['uploaded_file'])
+    query_df = st.session_state['df_user_stories']
     def aggrid_interactive_table(df: pd.DataFrame):
         """Creates an st-aggrid interactive table based on a dataframe.
         Args:
@@ -31,6 +31,6 @@ def interactive_table():
         return selection  # return the selected row
 
     selection = aggrid_interactive_table(df=query_df)  # create the table
-
+    
 if __name__ == "__main__":
     interactive_table()
