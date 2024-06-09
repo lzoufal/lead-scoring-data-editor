@@ -4,3 +4,6 @@ __pycache__
 data.csv
 .vscode
 updated_data.csv.gz
+filtered_data.csv.gz
+updated_data.csv.gz
+

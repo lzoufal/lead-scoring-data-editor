@@ -42,8 +42,8 @@ def display_main_content(openai_api_key):
     #show_data_info(df)
     show_context(df)
 
-    if st.session_state['df_user_stories'] is not None:
-        interactive_table()
+    #if st.session_state['df_user_stories'] is not None:
+    #    interactive_table()
     
     if len(openai_api_key) < 14:
         st.warning("To continue, please enter your OpenAI API Key.")

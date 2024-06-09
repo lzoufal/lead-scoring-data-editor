@@ -2,7 +2,7 @@ import pandas as pd
 
 
 templates = pd.DataFrame({
-    "type" : ["E-mail", "LinkedInm"],
+    "type" : ["E-mail", "LinkedIn"],
     "template": ["""Create e-mail communication to promote Keboola, 
                  that is targetting position:[[job_role]], 
                  who is working in industry:[[industry]], 

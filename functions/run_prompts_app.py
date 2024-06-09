@@ -93,9 +93,9 @@ def run_prompts_app(df):
     prompts_dict = get_prompts(num_prompts)
     check_missing_cols(df, prompts_dict)
     
-    col1, _, _ =st.columns(3)
-    rows_to_use = col1.number_input("Select how many rows of the table you want to use:", min_value=1, value=1, max_value=df.shape[0])
-    df_subset = df.head(rows_to_use)
+    #col1, _, _ =st.columns(3)
+    #rows_to_use = col1.number_input("Select how many rows of the table you want to use:", min_value=1, value=1, max_value=df.shape[0])
+    df_subset = df.head(1)
     
     # Get responses
     if st.button('OKaaaAAAaaAYYYy LETS GO 🎢'):
