@@ -18,7 +18,7 @@ def get_prompts(num_prompts):
             prompt_input = st.text_area(
                 f'Prompt {i + 1}:', 
                 placeholder=f'Prompt {i + 1}:', 
-                label_visibility="collapsed", height=300,
+                label_visibility="collapsed", height=200,
                 key=f"prompt_{i + 1}",
                 value= st.session_state.get("template_text",'')
             )

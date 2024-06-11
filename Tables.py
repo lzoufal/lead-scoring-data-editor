@@ -125,7 +125,7 @@ def fetch_all_ids():
 
 # Create cards for tables in rows
 def create_cards_in_rows(tables_df):
-    cols = st.columns(3)  # Creates a row of 4 columns
+    cols = st.columns(3)  # Creates a row of 3 columns
     for index, row in tables_df.iterrows():
         with cols[index % 3]:
             display_table_card(row)
@@ -192,8 +192,8 @@ def main():
     st.title("Lead score management")
     st.write('Select and click on a specific table you want to edit.')
               
-    create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground"],
-                                       "paths" :  ["pages/Events.py","pages/Contacts.py","pages/PromptLab.py"]
+    create_cards_in_rows(pd.DataFrame({"cards" : ["Event scoring","Contact scoring","Prompt playground","Segments"],
+                                       "paths" :  ["pages/Events.py","pages/Contacts.py","pages/Playground.py","pages/Segments.py"]
                                        }))
     if st.session_state["go-to-data"] == True:
         st.session_state["go-to-data"] = False

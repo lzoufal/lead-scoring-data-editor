@@ -84,9 +84,6 @@ def run_prompts_app(df):
             on_change=set_template
         )
 
-
-
-
     col1, _, _ =st.columns(3)
     num_prompts = col1.number_input("Select number of prompts:", min_value=1, value=1, max_value=3, )
 
@@ -108,52 +105,11 @@ def run_prompts_app(df):
         st.markdown(f'<h3 style="border-bottom: 2px solid #3ca0ff; ">{"Responses"}</h3>', unsafe_allow_html=True)
         st.text(" ")
 
-        resp_info = "🔍 Check out the responses and see which prompt fits your data best."
+        resp_info = "⬇️⬇️⬇️ Check out the responses and see which prompt fits your data best."
         st.markdown(f'<p style="background-color:rgba(244,249,254,255);color:#283338;font-size:16px;border-radius:10px;padding:15px;">{resp_info}</p>', unsafe_allow_html=True)
 
-        st.dataframe(st.session_state["response_content"], use_container_width=True, hide_index=True)
+        st.text_area(label="Prompt result", value=st.session_state["response_content"]["prompt_1"].values[0],height=300)
 
     # Rate, download, reset
-        st.markdown("What's next? 👀 Check the response similarity score to pinpoint areas where prompts might seem contradictory, it's a great way to refine your prompts and understand potential model challenges. Download the prompts with their settings, or start from scratch with a different table!")
+    #    st.markdown("What's next? 👀 Check the response similarity score to pinpoint areas where prompts might seem contradictory, it's a great way to refine your prompts and understand potential model challenges. Download the prompts with their settings, or start from scratch with a different table!")
         
-        rate_button, get_button, reset_button = st.columns(3)
-        with rate_button: 
-            rate_click = st.button('Check the similarity score', use_container_width=True, disabled=(num_prompts == 1))
-        
-        with get_button: 
-            prompts_list = [{"name": key, "message": value} for key, value in prompts_dict.items()]
-            params_list = []
-            for i in range(num_prompts):
-                param_key = f"response_params_{i+1}"
-                if param_key in st.session_state:
-                    params_list.append(st.session_state[param_key])
-            combined_strings = []
-            for prompt_dict, param_dict in zip(prompts_list, params_list):
-                combined_data = {**prompt_dict, **param_dict}
-                combined_strings.append(json.dumps(combined_data, indent=2))
-            prompts_download = '\n\n'.join(combined_strings)
-            st.download_button('Download prompts', prompts_download, use_container_width=True)
-    
-        with reset_button:
-            reset_click = st.button('Reset app', use_container_width=True)
-        
-        # Rate reponses 
-        if rate_click:
-            rating_input = st.session_state["response_content"].copy()
-            model = SentenceTransformer('paraphrase-MiniLM-L6-v2') 
-            rating_input["similarity_score"] = rating_input.apply(lambda row: compute_similarity_product(row, num_prompts, model), axis=1)
-            cols = ['similarity_score'] + [col for col in rating_input if col != 'similarity_score']
-            rating_input = rating_input[cols]
-            st.session_state['rating_content'] = rating_input
-
-            st.markdown(f'<h3 style="border-bottom: 2px solid #3ca0ff; ">{"Similarity"}</h3>', unsafe_allow_html=True)
-            st.text(" ")
-
-            score_info = "🥇 The closer the score is to 1, the higher the similarity between the responses."
-            st.markdown(f'<p style="background-color:rgba(244,249,254,255);color:#283338;font-size:16px;border-radius:10px;padding:15px;">{score_info}</p>', unsafe_allow_html=True)
-
-            st.dataframe(st.session_state['rating_content'], use_container_width=True, hide_index=True)
-
-        if reset_click:
-            st.session_state.clear()
-            st.rerun()
